@@ -1,0 +1,109 @@
+object DemoAForm: TDemoAForm
+  Left = 10
+  Height = 340
+  Top = 10
+  Width = 490
+  Caption = 'CrossDragDrop demo A'
+  ClientHeight = 340
+  ClientWidth = 490
+  OnCreate = FormCreate
+  object lblHint: TLabel
+    Left = 16
+    Height = 15
+    Top = 12
+    Width = 458
+    Caption = 'Drag the button or the label into demo B or any program; drop on the boxes.'
+  end
+  object edtText: TEdit
+    Left = 16
+    Height = 30
+    Top = 36
+    Width = 300
+    TabOrder = 0
+    Text = 'Hello from demo A'
+  end
+  object btnText: TButton
+    Left = 330
+    Height = 30
+    Top = 36
+    Width = 144
+    Caption = 'Drag this text'
+    TabOrder = 1
+  end
+  object lblFile: TLabel
+    Left = 16
+    Height = 15
+    Top = 80
+    Width = 150
+    Caption = 'Drag this file'
+  end
+  object lblMemo: TLabel
+    Left = 16
+    Height = 15
+    Top = 104
+    Width = 100
+    Caption = 'Drop text here'
+  end
+  object memText: TMemo
+    Left = 16
+    Height = 180
+    Top = 122
+    Width = 220
+    ScrollBars = ssAutoVertical
+    TabOrder = 2
+  end
+  object lblList: TLabel
+    Left = 254
+    Height = 15
+    Top = 104
+    Width = 100
+    Caption = 'Drop files here'
+  end
+  object lstFiles: TListBox
+    Left = 254
+    Height = 180
+    Top = 122
+    Width = 220
+    ItemHeight = 0
+    TabOrder = 3
+  end
+  object lblStatus: TLabel
+    Left = 16
+    Height = 15
+    Top = 314
+    Width = 458
+    Caption = 'Ready.'
+  end
+  object SourceText: TCrossDragDropSource
+    Control = btnText
+    OnGetText = SourceTextGetText
+    OnDragEnd = SourceDragEnd
+    OnError = HelperError
+    Left = 340
+    Top = 128
+  end
+  object SourceFile: TCrossDragDropSource
+    Control = lblFile
+    OnGetFiles = SourceFileGetFiles
+    OnDragEnd = SourceDragEnd
+    OnError = HelperError
+    Left = 340
+    Top = 176
+  end
+  object TargetText: TCrossDragDropTarget
+    Control = memText
+    AcceptedFormats = [cdfText]
+    OnDropText = TargetTextDropText
+    OnError = HelperError
+    Left = 340
+    Top = 224
+  end
+  object TargetFiles: TCrossDragDropTarget
+    Control = lstFiles
+    AcceptedFormats = [cdfFiles]
+    OnDropFiles = TargetFilesDropFiles
+    OnError = HelperError
+    Left = 340
+    Top = 272
+  end
+end

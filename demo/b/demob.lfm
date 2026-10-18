@@ -1,0 +1,93 @@
+object DemoBForm: TDemoBForm
+  Left = 10
+  Height = 360
+  Top = 10
+  Width = 490
+  Caption = 'CrossDragDrop demo B'
+  ClientHeight = 360
+  ClientWidth = 490
+  OnCreate = FormCreate
+  object imgPicture: TImage
+    Left = 16
+    Height = 90
+    Top = 16
+    Width = 120
+  end
+  object lblPicture: TLabel
+    Left = 16
+    Height = 15
+    Top = 110
+    Width = 120
+    Caption = 'Drag the picture: a PNG file'
+  end
+  object sbtnQuote: TSpeedButton
+    Left = 150
+    Height = 30
+    Top = 16
+    Width = 140
+    Caption = 'Drag a line of text'
+  end
+  object pnlDrop: TPanel
+    Left = 150
+    Height = 50
+    Top = 56
+    Width = 324
+    Caption = 'Drop text or files here'
+    TabOrder = 0
+  end
+  object lblTarget: TLabel
+    Left = 16
+    Height = 15
+    Top = 134
+    Width = 200
+    Caption = 'Drop a picture file here'
+  end
+  object imgTarget: TImage
+    Left = 16
+    Height = 176
+    Top = 152
+    Width = 458
+    Center = True
+    Proportional = True
+    Stretch = True
+  end
+  object lblStatus: TLabel
+    Left = 16
+    Height = 15
+    Top = 336
+    Width = 458
+    Caption = 'Ready.'
+  end
+  object SourcePicture: TCrossDragDropSource
+    Control = imgPicture
+    OnGetFiles = SourcePictureGetFiles
+    OnDragEnd = SourceDragEnd
+    OnError = HelperError
+    Left = 320
+    Top = 120
+  end
+  object SourceQuote: TCrossDragDropSource
+    Control = sbtnQuote
+    OnGetText = SourceQuoteGetText
+    OnDragEnd = SourceDragEnd
+    OnError = HelperError
+    Left = 320
+    Top = 168
+  end
+  object TargetAny: TCrossDragDropTarget
+    Control = pnlDrop
+    OnDropText = TargetAnyDropText
+    OnDropFiles = TargetAnyDropFiles
+    OnError = HelperError
+    Left = 320
+    Top = 216
+  end
+  object TargetPicture: TCrossDragDropTarget
+    Control = imgTarget
+    AcceptedFormats = [cdfFiles]
+    OnDropFiles = TargetPictureDropFiles
+    OnError = HelperError
+    Left = 320
+    Top = 264
+  end
+end

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="CrossDragDrop"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="Tony Stone"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <IncludeFiles Value="src"/>
+        <OtherUnitFiles Value="src"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="TCrossDragDropSource and TCrossDragDropTarget: native drag and drop of text and files between any Lazarus control and other programs. Point the helper at a control and handle one event. Plain LCL."/>
+    <License Value="0BSD"/>
+    <Version Minor="1"/>
+    <Files Count="5">
+      <Item1>
+        <Filename Value="src/crossdragdropdata.pas"/>
+        <UnitName Value="CrossDragDropData"/>
+      </Item1>
+      <Item2>
+        <Filename Value="src/crossdragdrophelpers.pas"/>
+        <UnitName Value="CrossDragDropHelpers"/>
+      </Item2>
+      <Item3>
+        <Filename Value="src/crossdragdropgtk.pas"/>
+        <UnitName Value="CrossDragDropGtk"/>
+      </Item3>
+      <Item4>
+        <Filename Value="src/crossdragdropqt.pas"/>
+        <UnitName Value="CrossDragDropQt"/>
+      </Item4>
+      <Item5>
+        <Filename Value="src/crossdragdropreg.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="CrossDragDropReg"/>
+      </Item5>
+    </Files>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
