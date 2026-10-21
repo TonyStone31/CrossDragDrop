@@ -1,7 +1,7 @@
 # Platform matrix
 
-The GTK2/GTK3 and Qt5 backends are complete and tested through the real
-components. Other rows remain targets.
+The GTK2/GTK3, Qt5 and Win32 backends are complete and tested through the
+real components. Other rows remain targets.
 
 | Operating system | LCL widgetset | Display/architecture goal | Status |
 |---|---|---|---|
@@ -10,7 +10,8 @@ components. Other rows remain targets.
 | Linux | GTK2 | X11, x86_64 | Tested: components, lifetime, effects, in Xephyr |
 | Linux | Qt5 | X11 and native Wayland, checked separately | Tested: components and effects, both backends, in the KDE guest |
 | Linux | Qt6 | X11 and native Wayland, checked separately | Planned; test guest lacks Qt6Pas and Qt6 LCL units |
-| Windows | Win32 | x86 and x86_64, checked separately | Backend planned; x86_64 demos build and run, report unsupported |
+| Windows | Win32 | x86_64 | Tested: components, demos, lifetime, effects, Explorer and WordPad, in the Windows 10 guest |
+| Windows | Win32 | x86 (32-bit) | Planned; not built yet |
 | macOS | Cocoa | Intel x86_64 | Backend planned; demos build and run in the guest, report unsupported |
 | macOS | Cocoa | Apple Silicon aarch64 | Planned; test environment not established |
 | BSD desktops | GTK/Qt as available | Assess portability and native peers | Planned; test environment not established |
@@ -97,3 +98,31 @@ not available on this widgetset yet." The package and the lifetime check
 also built for Cocoa. No drag was attempted; there is nothing to drag
 with until the backends exist.
 
+## Component checks on Windows 10, Win32 (20 Oct 2026)
+
+The package, the component probe, the lifetime check and both demos were
+cross-built on the Linux host for Windows x86_64 (FPC 3.3.1, LCL 5.99,
+Win32 widgetset) and run in the Windows 10 guest (version 10.0.19045).
+The backend is OLE drag and drop: DoDragDrop with a shell data object
+holding Unicode text and a CF_HDROP file list, the drag image helper with
+a snapshot of the control, and an IDropTarget registered on the control's
+window. The fade and the highlight are drawn after the window's own paint
+through a window subclass.
+
+The two-process probe passed with the same eight gestures as on Linux:
+exact Unicode text and both file paths, two clicks and eight mouse-down
+handlers, six paired begin and end events with the fade on and off, four
+drops, one rejection and one cancel, which Windows reports apart. The
+screenshot pixel check confirmed the faded source and the framed target,
+and the hover screenshot shows the snapshot under the pointer. The
+lifetime check passed, including a recreated window handle, and heaptrc
+reported no unfreed blocks.
+
+Native peers, each checked by hand with hidctl: two files dragged from an
+Explorer window to a target arrived with their exact paths, from a mapped
+drive and from a `\\server\share` path; the label's two files dropped in an
+Explorer folder were copied with identical contents; the button's text
+dropped in WordPad appeared exactly; text selected in WordPad dropped on a
+target arrived exactly. Explorer's own drag image showed over the target.
+Demo A and demo B exchanged text and a picture file in both directions.
+32-bit Windows was not built.

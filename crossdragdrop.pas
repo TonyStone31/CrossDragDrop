@@ -9,7 +9,7 @@ interface
 
 uses
   CrossDragDropData, CrossDragDropHelpers, CrossDragDropGtk, CrossDragDropQt,
-  CrossDragDropReg, LazarusPackageIntf;
+  CrossDragDropWin, CrossDragDropReg, LazarusPackageIntf;
 
 implementation
 

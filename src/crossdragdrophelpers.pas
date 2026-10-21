@@ -263,6 +263,9 @@ uses
 {$ELSEIF DEFINED(LCLQT5) OR DEFINED(LCLQT6)}
 uses
   CrossDragDropQt;
+{$ELSEIF DEFINED(LCLWIN32)}
+uses
+  CrossDragDropWin;
 {$ENDIF}
 
 var

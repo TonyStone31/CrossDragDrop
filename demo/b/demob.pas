@@ -3,14 +3,14 @@ unit DemoB;
 {$mode objfpc}{$H+}
 // Copyright (c) 2026 Tony Stone. 0BSD; see LICENSE.
 
-// Demo B: a picture that is dragged as a PNG file, a speed button that
-// drags a line of text, a panel that takes either, and a picture box that
+// Demo B: a picture that is dragged as a PNG file, a button that drags
+// a line of text, a panel that takes either, and a picture box that
 // takes an image file.
 
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, StdCtrls, ExtCtrls, Buttons,
+  Classes, SysUtils, Forms, Controls, Graphics, StdCtrls, ExtCtrls,
   CrossDragDropHelpers;
 
 type
@@ -21,7 +21,7 @@ type
     lblTarget: TLabel;
     lblStatus: TLabel;
     pnlDrop: TPanel;
-    sbtnQuote: TSpeedButton;
+    btnQuote: TButton;
     SourcePicture: TCrossDragDropSource;
     SourceQuote: TCrossDragDropSource;
     TargetAny: TCrossDragDropTarget;

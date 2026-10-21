@@ -20,7 +20,7 @@ object DemoBForm: TDemoBForm
     Width = 120
     Caption = 'Drag the picture: a PNG file'
   end
-  object sbtnQuote: TSpeedButton
+  object btnQuote: TButton
     Left = 150
     Height = 30
     Top = 16
@@ -67,7 +67,7 @@ object DemoBForm: TDemoBForm
     Top = 120
   end
   object SourceQuote: TCrossDragDropSource
-    Control = sbtnQuote
+    Control = btnQuote
     OnGetText = SourceQuoteGetText
     OnDragEnd = SourceDragEnd
     OnError = HelperError

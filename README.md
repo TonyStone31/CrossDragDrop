@@ -4,9 +4,27 @@ Native drag and drop for existing Lazarus controls. Two nonvisual
 components: point one at a control, handle one event.
 
 **Status: tested on Linux with GTK2 and GTK3 on X11, GTK3 on native
-Wayland, and Qt5 on X11 and native Wayland. Windows and macOS are the
-next backends; they compile today and report that drag and drop is not
-available.**
+Wayland, and Qt5 on X11 and native Wayland, and on Windows 10 (64-bit,
+Win32 widgetset). macOS is the next backend; it compiles today and
+reports that drag and drop is not available.**
+
+| Platform | Two programs: text, files, clicks, cancel | Fade and highlight | Lifetime check | Other programs |
+|---|---|---|---|---|
+| Linux GTK3, X11 | ✅ | ✅ | ✅ | not yet |
+| Linux GTK2, X11 | ✅ | ✅ | ✅ | not yet |
+| Linux GTK3, native Wayland (KDE) | ✅ | ✅ | not run | not yet |
+| Linux Qt5, X11 | ✅ | ✅ | ✅ | not yet |
+| Linux Qt5, native Wayland (KDE) | ✅ | ✅ | ✅ | not yet |
+| Windows 10 x86_64, Win32 | ✅ | ✅ | ✅ | ✅ Explorer, WordPad |
+| Windows 32-bit | not built | | | |
+| Linux Qt6 | not built | | | |
+| macOS Cocoa | builds, reports not available | | | |
+
+"Two programs" is the test probe: two separate processes, a plain click,
+a press below the drag threshold, Unicode text, two files with spaces,
+`%`, `#` and accented names, a fallback to text, a drop the target refuses
+and Escape, all checked against both programs' event logs. Details per
+platform are in the [platform matrix](docs/PLATFORMS.md).
 
 ```pascal
 // Drop a TCrossDragDropSource on the form, set Control to Button1 and
@@ -53,8 +71,8 @@ list or a widgetset without support; nothing shows a dialog.
 
 `demo/a` and `demo/b` are two separate programs. Run both and drag between
 them: a button that carries an edit box's text, a label that carries a
-file, a picture that is offered as a PNG file, a speed button with a line
-of text, and targets in a memo, a list box, a panel and a picture box. The
+file, a picture that is offered as a PNG file, a button with a line of
+text, and targets in a memo, a list box, a panel and a picture box. The
 picture box refuses a file that is not an image, and both sides say so.
 
 | Demo A | Demo B |
@@ -65,7 +83,8 @@ picture box refuses a file that is not an image, and both sides say so.
 
 Open `crossdragdrop.lpk` in Lazarus, compile and install. The components
 are on the System page. The package needs only the LCL; the GTK and Qt
-backends use the libraries the LCL already loads. Test automation uses
+backends use the libraries the LCL already loads, and the Windows backend
+uses the system's OLE drag and drop. Test automation uses
 LazHIDControl's hidctl, which is not a runtime dependency.
 
 ## What differs between desktops
@@ -79,6 +98,14 @@ LazHIDControl's hidctl, which is not a runtime dependency.
   is both a source and a target gets one for each.
 * Whether the snapshot of the control appears under the pointer on
   Wayland depends on the compositor.
+* Windows tells a canceled drag (Escape) from a rejected one, like X11.
+  Text goes out as Unicode text and files as a file list (CF_HDROP), the
+  formats Explorer, WordPad and most programs use; a target also reads the
+  ANSI text of older programs. Files from a network share arrive as
+  `\\server\share\...` paths.
+* On Windows a target registers its control's window with OLE. A window
+  that other code in the program already registered for drops is refused
+  with an error.
 
 ## Origin
 
