@@ -9,7 +9,14 @@ desktop are in [the platform matrix](docs/PLATFORMS.md).
 
 - [ ] Cocoa backend: NSDraggingSource and NSDraggingDestination, checked
       in the macOS guest.
+- [ ] Marching ants around the target while a drop is offered over it
+      (Tony, 31 Oct 2026): a moving dashed frame rather than the still
+      one, for a file or anything else about to be dropped, on every
+      backend. The still frame in the highlight color stays as the
+      fallback where a timer-driven redraw is not possible.
 - [ ] Check the help comments in the Object Inspector.
+- [ ] Qt: a target on a memo or an edit box, the way GTK got it on 31 Oct
+      2026 (a QTextEdit's viewport takes drops of its own); not checked.
 - [ ] Drag to and from a file manager and a text editor on each Linux
       desktop (done on Windows with Explorer and WordPad).
 - [ ] Build and check 32-bit Windows.

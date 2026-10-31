@@ -83,7 +83,9 @@ type
     class function Draw(Widget: PGtkWidget; cr: Pcairo_t; Data: gpointer): gboolean; cdecl; static;
     {$ENDIF}
   public
-    constructor Create(AOwner: TCrossDragDropNative);
+    // On the control's widget, or on AWidget when given (a target sits on
+    // the inner widget that GTK already made a drop destination).
+    constructor Create(AOwner: TCrossDragDropNative; AWidget: PGtkWidget = nil);
     destructor Destroy; override;
     procedure Connect(const Name: PChar; Callback: TGCallback; After: boolean = False;
       OnWidget: PGtkWidget = nil);
@@ -124,6 +126,8 @@ type
   private
     FHook: TGtkHook;
     FTextList, FFilesList: PGtkTargetList;
+    // The inner widget's own targets, given back when this target goes.
+    FKept: PGtkTargetList;
     FBlocked: gulong;
     FPending: PGdkDragContext;
     FPendingFormat: TCrossDragDropFormat;
@@ -162,6 +166,25 @@ begin
   {$ELSE}
   Result := TGtk3Widget(Control.Handle).Widget;
   {$ENDIF}
+end;
+
+{ The widget a drop on Control lands on.  A memo's text view and an edit
+  box's entry are drop destinations of their own, set up by GTK for text:
+  a drop over them goes to them, not to the LCL's outer widget, and they
+  finish it unhandled when it is not text.  So a target sits on that inner
+  widget when there is one; otherwise on the control's widget. }
+function DropWidgetOf(Control: TWinControl): PGtkWidget;
+var
+  Inner: PGtkWidget;
+begin
+  Result := WidgetOf(Control);
+  {$IFDEF LCLGTK2}
+  Inner := PGtkWidget(GetWidgetInfo(Result)^.CoreWidget);
+  {$ELSE}
+  Inner := TGtk3Widget(Control.Handle).GetContainerWidget;
+  {$ENDIF}
+  if (Inner <> nil) and (Inner <> Result) and (gtk_drag_dest_get_target_list(Inner) <> nil) then
+    Result := Inner;
 end;
 
 function AllowsCopy(Context: PGdkDragContext): boolean;
@@ -216,11 +239,12 @@ end;
 
 { TGtkHook }
 
-constructor TGtkHook.Create(AOwner: TCrossDragDropNative);
+constructor TGtkHook.Create(AOwner: TCrossDragDropNative; AWidget: PGtkWidget);
 begin
   inherited Create;
   FOwner := AOwner;
-  FWidget := WidgetOf(AOwner.Helper.NativeControl);
+  FWidget := AWidget;
+  if FWidget = nil then FWidget := WidgetOf(AOwner.Helper.NativeControl);
   g_object_ref(FWidget);
   Connect('destroy', TGCallback(@Destroyed));
   {$IFDEF LCLGTK2}
@@ -534,7 +558,9 @@ var
   SignalID: guint;
 begin
   inherited Create(AHelper);
-  FHook := TGtkHook.Create(Self);
+  FHook := TGtkHook.Create(Self, DropWidgetOf(AHelper.NativeControl));
+  FKept := gtk_drag_dest_get_target_list(FHook.Widget);
+  if FKept <> nil then gtk_target_list_ref(FKept);
   FTextList := gtk_target_list_new(nil, 0);
   gtk_target_list_add_text_targets(FTextList, TextInfo);
   FFilesList := gtk_target_list_new(nil, 0);
@@ -577,8 +603,20 @@ begin
   if not FHook.Dead then
   begin
     gtk_drag_dest_unset(FHook.Widget);
+    if FKept <> nil then
+    begin
+      // What GTK had set up for text on the widget, as its text view and
+      // entry do (no default handling, copy or move).
+      {$IFDEF LCLGTK2}
+      gtk_drag_dest_set(FHook.Widget, 0, nil, 0, GDK_ACTION_COPY or GDK_ACTION_MOVE);
+      {$ELSE}
+      gtk_drag_dest_set(FHook.Widget, [], nil, 0, [GDK_ACTION_COPY, GDK_ACTION_MOVE]);
+      {$ENDIF}
+      gtk_drag_dest_set_target_list(FHook.Widget, FKept);
+    end;
     if FBlocked <> 0 then g_signal_handler_unblock(FHook.Widget, FBlocked);
   end;
+  if FKept <> nil then gtk_target_list_unref(FKept);
   gtk_target_list_unref(FTextList);
   gtk_target_list_unref(FFilesList);
   FHook.Free;
@@ -673,6 +711,9 @@ var
 begin
   Self_ := TargetOf(Data);
   if Context <> Self_.FPending then Exit;
+  // The inner widget's own receive (a text view inserting text, then
+  // finishing the drag again) does not run after this one.
+  g_signal_stop_emission_by_name(Widget, 'drag-data-received');
   Success := False;
   try
     try

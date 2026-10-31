@@ -72,8 +72,8 @@ list or a widgetset without support; nothing shows a dialog.
 `demo/a` and `demo/b` are two separate programs. Run both and drag between
 them: a button that carries an edit box's text, a label that carries a
 file, a picture that is offered as a PNG file, a button with a line of
-text, and targets in a memo, a list box, a panel and a picture box. The
-picture box refuses a file that is not an image, and both sides say so.
+text, and targets in a panel and a picture box. The picture box refuses a
+file that is not an image, and both sides say so.
 
 | Demo A | Demo B |
 |---|---|
@@ -106,6 +106,11 @@ LazHIDControl's hidctl, which is not a runtime dependency.
 * On Windows a target registers its control's window with OLE. A window
   that other code in the program already registered for drops is refused
   with an error.
+* On GTK a memo's text view and an edit box's entry are drop targets of
+  their own, set up by GTK for text. A target on such a control sits on
+  that inner widget, so a file dropped on a memo reaches OnDropFiles
+  instead of being finished unhandled by the text view; the widget's own
+  text targets are given back when the component goes.
 
 ## Origin
 
